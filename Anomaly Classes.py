@@ -1,4 +1,5 @@
 import time
+import random
 
 questions = {1: "Where have you come from?",
              2: "Why should I let you in?",
@@ -11,7 +12,7 @@ questions = {1: "Where have you come from?",
 #_____________________________________________________________
 
 class Individual:
-    # All anomaly defenitions.
+    # All anomaly definitions.
     ANOMALIES = {1: "Delayed Speech",
         2: "Unusual Pallor",
         3: "Irregular Breathing",
@@ -19,7 +20,7 @@ class Individual:
         5: "Speech Impediment",
         6: "Inappropriate Responses"}
 
-    #initializing code for each subclass/objject
+    # Initializing code for each subclass/object
     def __init__(self,
         name,
         backstory,
@@ -34,58 +35,6 @@ class Individual:
 
         self.asked_questions = set()
         self.is_inspected = False
-
-#_____________________________________________________________
-# Functions / Methods para sa individuals (Sila Ten n dito)
-#_____________________________________________________________
-
-    def answer_question(self, question_id):
-        if question_id not in self.dialogues:
-            return "Invalid question."
-
-        if question_id in self.asked_questions:
-            return "You have already asked this question."
-
-        self.asked_questions.add(question_id)
-        response = self.dialogues[question_id]
-
-        # Apply a dialogue anomaly when appropriate.
-        if self.anomaly_id == 1:
-            time.sleep(3)
-
-        elif self.anomaly_id == 3:
-            pass
-
-        elif self.anomaly_id == 4:
-            pass
-
-        elif self.anomaly_id == 5:
-            pass
-
-        elif self.anomaly_id == 6:
-            pass
-
-        return response
-
-    def inspect_appearance(self):
-        self.is_inspected = True
-        description = self.appearance
-
-        # Apply physical anomaly descriptions when appropriate.
-        if self.anomaly_id == 2:
-            description += " Their skin is unusually pale."
-
-        elif self.anomaly_id == 4:
-            pass
-
-        return description
-
-    def get_anomaly_name(self):
-        if self.anomaly_id is None:
-            return "No anomaly"
-
-        return self.ANOMALIES.get(self.anomaly_id, "Unknown anomaly")
-
 
 #_____________________________________________________________
 # Characters. Define each subclass of individual as each character
@@ -109,7 +58,120 @@ class Walang_Pagkain_Buseng(Individual):
 class Doctor(Individual):
     pass
 
+#_____________________________________________________________
+# Functions / Methods para sa individuals (Sila Ten n dito)
+#_____________________________________________________________
 
+START_SANITY = 100
+ACTION_COST = 5
+WRONG_GUESS_COST = 20
+
+def answer_question(self, question_id):
+    if question_id not in self.dialogues:
+        return "Invalid question."
+
+    if question_id in self.asked_questions:
+        return "You have already asked this question."
+
+    self.asked_questions.add(question_id)
+    response = self.dialogues[question_id]
+
+    # Apply a dialogue anomaly when appropriate.
+    if self.anomaly_id == 1:
+        time.sleep(3)
+
+    elif self.anomaly_id == 3:
+        pass
+
+    elif self.anomaly_id == 4:
+        pass
+
+    elif self.anomaly_id == 5:
+        pass
+
+    elif self.anomaly_id == 6:
+        pass
+
+    return response
+
+def inspect_appearance(self):
+    self.is_inspected = True
+    description = self.appearance
+
+    # Apply physical anomaly descriptions when appropriate.
+    if self.anomaly_id == 2:
+        description += " Their skin is unusually pale."
+
+    elif self.anomaly_id == 4:
+        pass
+
+    return description
+
+def get_anomaly_name(self):
+    if self.anomaly_id is None:
+        return "No anomaly"
+
+    return self.ANOMALIES.get(self.anomaly_id, "Unknown anomaly")
+
+def generate_level_characters():
+    return random.sample(range(1, 21), 10)
+
+def talk_to_character(char):
+    for number, question in questions.items(): 
+        print(f"{number}. {question}")
+
+    choice = input("Ask which question? ")
+
+    if choice.isdigit():
+        print(answer_question(char, int(choice)))
+    else:
+        print("Invalid question.")
+
+def guess_anomaly(person, sanity):
+    if (input("Is the character an anomaly? (y/n)") == "y") == (person.anomaly_id is not None):
+        print("Correct.")
+        return sanity
+
+    print("Wrong guess!") # if wrong guess
+    return sanity - WRONG_GUESS_COST
+
+def character_encounter(self):
+    print("\nAN ANOMALY APPROACHES YOU")
+    print(self.appearance)
+
+    while sanity > 0:
+        print(f"\nSanity: {sanity}")
+        print("1. Inspect their body")
+        print("2. Talk to them")
+        print("3. Make your decision")
+        choice = input("> ")
+
+        if choice == "1":
+            print(inspect_appearance(person))
+            sanity -= ACTION_COST
+
+        elif choice == "2":
+            talk_to_character(person)
+            sanity -= ACTION_COST
+
+        elif choice == "3":
+            return guess_anomaly(person, sanity)
+
+        else:
+            print("Invalid choice.")
+
+def play_game(characters):
+    sanity = START_SANITY
+
+    for level, person in enumerate(characters, start=1):
+        print(f"Level {level}")  # level 1-10
+        sanity = character_encounter(person, sanity)
+
+        if sanity <= 0:
+            print("You lose (No sanity left).")
+            return
+
+    print(f"You win!")
 
 # Test dito:
 question = questions[1]
